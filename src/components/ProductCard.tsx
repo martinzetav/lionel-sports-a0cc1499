@@ -42,23 +42,12 @@ export default function ProductCard({ product, onAdd, index }: ProductCardProps)
           {product.Nombre}
         </h3>
 
-        <div className="mt-2 rounded-md bg-accent/15 px-2 py-1 text-center">
-          <span className="text-[11px] font-bold uppercase tracking-wide text-accent">
-            10% OFF{" "}
-          </span>
-          <span className="text-[11px] text-accent/80">
-            Efectivo / Transferencia
-          </span>
-        </div>
-
-        <div className="mt-2 flex items-center justify-between">
-          <div className="flex flex-col">
+        <div className="mt-3 flex items-center justify-between">
+          <div>
             <span className="font-display text-xl text-primary">
               {formatPrice(product.Precio)}
             </span>
-            <span className="text-[11px] text-muted-foreground line-through">
-              {formatPrice(Math.round(product.Precio / 0.9))}
-            </span>
+            <p className="text-[10px] font-semibold text-accent">10% OFF Efectivo/Transf.</p>
           </div>
           <motion.button
             whileTap={{ scale: 0.85 }}
