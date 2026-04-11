@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { CartItem } from "@/types/product";
 
 // ⚠️ CAMBIÁ ESTE NÚMERO POR EL TUYO
-const WHATSAPP_NUMBER = "5491112345678";
+const WHATSAPP_NUMBER = "5493804565772";
 
 interface CartDrawerProps {
   isOpen: boolean;

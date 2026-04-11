@@ -126,6 +126,22 @@ export default function Index() {
         )}
       </main>
 
+      {/* Mapa */}
+      <section className="container py-8">
+        <h3 className="mb-4 text-center font-display text-2xl tracking-wide text-foreground">
+          UBICACIÓN
+        </h3>
+        <div className="overflow-hidden rounded-xl border border-border">
+          <iframe
+            src="https://www.google.com/maps?q=Leonel+Sports+La+Rioja&output=embed"
+            className="h-72 w-full sm:h-96"
+            loading="lazy"
+            allowFullScreen
+            title="Ubicación Lionel Sports"
+          />
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-border py-6 text-center text-sm text-muted-foreground">
         © {new Date().getFullYear()} Lionel Sports — Todos los derechos reservados
