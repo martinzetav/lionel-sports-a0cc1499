@@ -9,7 +9,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { Loader2 } from "lucide-react";
 
-const CATEGORY_ORDER = ["Camisetas", "Botines", "Shorts", "Buzos", "Conjuntos"];
+const CATEGORY_ORDER = ["Camiseta", "Camisetas", "Botines", "Shorts", "Buzos", "Conjuntos"];
 
 export default function Index() {
   const { products, loading, error } = useProducts();
