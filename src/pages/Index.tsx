@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import ProductCard from "@/components/ProductCard";
 import CartDrawer from "@/components/CartDrawer";
 import CategoryFilter from "@/components/CategoryFilter";
+import CompetitionLogos from "@/components/CompetitionLogos";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { Loader2 } from "lucide-react";
@@ -12,6 +13,7 @@ export default function Index() {
   const cart = useCart();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [competition, setCompetition] = useState("");
 
   const categories = useMemo(() => {
     const set = new Set<string>();
@@ -28,9 +30,10 @@ export default function Index() {
         p.Nombre.toLowerCase().includes(search.toLowerCase()) ||
         p.Marca.toLowerCase().includes(search.toLowerCase());
       const matchCat = category === "" || p.Categoria1 === category;
-      return matchSearch && matchCat;
+      const matchComp = competition === "" || p.Categoria3 === competition;
+      return matchSearch && matchCat && matchComp;
     });
-  }, [products, search, category]);
+  }, [products, search, category, competition]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,6 +56,14 @@ export default function Index() {
           <p className="mt-2 max-w-lg text-sm text-primary-foreground/80">
             Encontrá camisetas, botines y todo lo que necesitás para la cancha. Hacé tu pedido y te lo llevamos.
           </p>
+        </section>
+
+        {/* Competition logos */}
+        <section className="mb-6">
+          <h3 className="mb-3 text-center font-display text-xl tracking-wide text-foreground">
+            COMPETICIONES
+          </h3>
+          <CompetitionLogos active={competition} onSelect={setCompetition} />
         </section>
 
         {/* Filters */}
