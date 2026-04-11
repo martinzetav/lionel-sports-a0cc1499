@@ -7,10 +7,9 @@ interface CategoryCarouselProps {
   title: string;
   products: Product[];
   onAdd: (p: Product) => void;
-  onOpenGallery: (p: Product) => void;
 }
 
-export default function CategoryCarousel({ title, products, onAdd, onOpenGallery }: CategoryCarouselProps) {
+export default function CategoryCarousel({ title, products, onAdd }: CategoryCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scroll = (dir: "left" | "right") => {
@@ -47,7 +46,7 @@ export default function CategoryCarousel({ title, products, onAdd, onOpenGallery
       >
         {products.map((product, i) => (
           <div key={product.ID} className="w-44 flex-shrink-0 snap-start sm:w-52">
-            <ProductCard product={product} onAdd={onAdd} index={i} onOpenGallery={onOpenGallery} />
+            <ProductCard product={product} onAdd={onAdd} index={i} />
           </div>
         ))}
       </div>
