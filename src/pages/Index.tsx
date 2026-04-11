@@ -17,7 +17,7 @@ export default function Index() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [competition, setCompetition] = useState("");
-  const [galleryProduct, setGalleryProduct] = useState<Product | null>(null);
+  
 
   const categories = useMemo(() => {
     const set = new Set<string>();
