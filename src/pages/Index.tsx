@@ -128,7 +128,7 @@ export default function Index() {
 
       {/* Footer */}
       <footer className="border-t border-border py-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Deportes Shop — Todos los derechos reservados
+        © {new Date().getFullYear()} Lionel Sports — Todos los derechos reservados
       </footer>
 
       {/* Cart */}

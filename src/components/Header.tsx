@@ -1,5 +1,6 @@
 import { ShoppingCart, Search } from "lucide-react";
 import { motion } from "framer-motion";
+import logo from "@/assets/logo.jpeg";
 
 interface HeaderProps {
   totalItems: number;
@@ -17,9 +18,12 @@ export default function Header({
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-card/80 backdrop-blur-md">
       <div className="container flex items-center justify-between gap-4 py-3">
-        <h1 className="font-display text-3xl tracking-wide text-primary sm:text-4xl">
-          DEPORTES SHOP
-        </h1>
+        <div className="flex items-center gap-2">
+          <img src={logo} alt="Lionel Sports" className="h-10 w-10 rounded-full object-cover" />
+          <h1 className="font-display text-3xl tracking-wide text-primary sm:text-4xl">
+            LIONEL SPORTS
+          </h1>
+        </div>
 
         <div className="relative hidden flex-1 max-w-md sm:block">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
