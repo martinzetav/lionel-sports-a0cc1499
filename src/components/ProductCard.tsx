@@ -1,3 +1,4 @@
+import { useState, useEffect, useCallback } from "react";
 import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Product } from "@/types/product";
@@ -6,11 +7,25 @@ interface ProductCardProps {
   product: Product;
   onAdd: (p: Product) => void;
   index: number;
+  onOpenGallery: (product: Product) => void;
 }
 
-export default function ProductCard({ product, onAdd, index }: ProductCardProps) {
+export default function ProductCard({ product, onAdd, index, onOpenGallery }: ProductCardProps) {
+  const images = [product.Img1, product.Img2, product.Img3].filter(Boolean);
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const id = setInterval(() => setCurrent((c) => (c + 1) % images.length), 3000);
+    return () => clearInterval(id);
+  }, [images.length]);
+
   const formatPrice = (n: number) =>
     new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(n);
+
+  const handleCardClick = useCallback(() => {
+    if (images.length > 1) onOpenGallery(product);
+  }, [images.length, onOpenGallery, product]);
 
   return (
     <motion.div
@@ -25,13 +40,28 @@ export default function ProductCard({ product, onAdd, index }: ProductCardProps)
         </span>
       )}
 
-      <div className="aspect-square overflow-hidden bg-muted">
-        <img
-          src={product.Img1}
-          alt={product.Nombre}
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
+      {/* Dots indicator */}
+      {images.length > 1 && (
+        <div className="absolute bottom-[calc(50%+8px)] left-1/2 z-10 flex -translate-x-1/2 gap-1">
+          {images.map((_, i) => (
+            <span
+              key={i}
+              className={`h-1.5 w-1.5 rounded-full transition-colors ${i === current ? "bg-primary" : "bg-foreground/30"}`}
+            />
+          ))}
+        </div>
+      )}
+
+      <div className="aspect-square cursor-pointer overflow-hidden bg-muted" onClick={handleCardClick}>
+        {images.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt={product.Nombre}
+            loading="lazy"
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${i === current ? "opacity-100" : "opacity-0"}`}
+          />
+        ))}
       </div>
 
       <div className="p-4">
