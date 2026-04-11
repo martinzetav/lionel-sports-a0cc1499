@@ -4,9 +4,12 @@ import ProductCard from "@/components/ProductCard";
 import CartDrawer from "@/components/CartDrawer";
 import CategoryFilter from "@/components/CategoryFilter";
 import CompetitionLogos from "@/components/CompetitionLogos";
+import CategoryCarousel from "@/components/CategoryCarousel";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { Loader2 } from "lucide-react";
+
+const CATEGORY_ORDER = ["Camisetas", "Botines", "Shorts", "Buzos", "Conjuntos"];
 
 export default function Index() {
   const { products, loading, error } = useProducts();
@@ -34,6 +37,29 @@ export default function Index() {
       return matchSearch && matchCat && matchComp;
     });
   }, [products, search, category, competition]);
+
+  // Group filtered products by Categoria1
+  const groupedByCategory = useMemo(() => {
+    const map = new Map<string, typeof filtered>();
+    filtered.forEach((p) => {
+      const key = p.Categoria1 || "Otros";
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(p);
+    });
+    // Sort by predefined order
+    const sorted: { title: string; items: typeof filtered }[] = [];
+    CATEGORY_ORDER.forEach((cat) => {
+      if (map.has(cat)) {
+        sorted.push({ title: cat, items: map.get(cat)! });
+        map.delete(cat);
+      }
+    });
+    // Append any remaining categories
+    map.forEach((items, title) => sorted.push({ title, items }));
+    return sorted;
+  }, [filtered]);
+
+  const isFiltered = search !== "" || category !== "" || competition !== "";
 
   return (
     <div className="min-h-screen bg-background">
@@ -80,12 +106,23 @@ export default function Index() {
           <p className="py-20 text-center text-destructive">{error}</p>
         ) : filtered.length === 0 ? (
           <p className="py-20 text-center text-muted-foreground">No se encontraron productos</p>
-        ) : (
+        ) : isFiltered && groupedByCategory.length === 1 ? (
+          /* Single category or search: show grid */
           <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
             {filtered.map((product, i) => (
               <ProductCard key={product.ID} product={product} onAdd={cart.addItem} index={i} />
             ))}
           </div>
+        ) : (
+          /* Default: show horizontal carousels per category */
+          groupedByCategory.map((group) => (
+            <CategoryCarousel
+              key={group.title}
+              title={group.title}
+              products={group.items}
+              onAdd={cart.addItem}
+            />
+          ))
         )}
       </main>
 
