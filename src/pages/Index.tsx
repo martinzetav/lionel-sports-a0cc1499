@@ -5,11 +5,9 @@ import CartDrawer from "@/components/CartDrawer";
 import CategoryFilter from "@/components/CategoryFilter";
 import CompetitionLogos from "@/components/CompetitionLogos";
 import CategoryCarousel from "@/components/CategoryCarousel";
-import ProductGalleryModal from "@/components/ProductGalleryModal";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { Loader2 } from "lucide-react";
-import type { Product } from "@/types/product";
 
 const CATEGORY_ORDER = ["Camiseta", "Camisetas", "Botines", "Shorts", "Buzos", "Conjuntos"];
 
@@ -19,7 +17,7 @@ export default function Index() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [competition, setCompetition] = useState("");
-  const [galleryProduct, setGalleryProduct] = useState<Product | null>(null);
+  
 
   const categories = useMemo(() => {
     const set = new Set<string>();
@@ -113,7 +111,7 @@ export default function Index() {
           /* Single category or search: show grid */
           <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
             {filtered.map((product, i) => (
-              <ProductCard key={product.ID} product={product} onAdd={cart.addItem} index={i} onOpenGallery={setGalleryProduct} />
+              <ProductCard key={product.ID} product={product} onAdd={cart.addItem} index={i} />
             ))}
           </div>
         ) : (
@@ -124,7 +122,6 @@ export default function Index() {
               title={group.title}
               products={group.items}
               onAdd={cart.addItem}
-              onOpenGallery={setGalleryProduct}
             />
           ))
         )}
@@ -151,10 +148,6 @@ export default function Index() {
         © {new Date().getFullYear()} Lionel Sports — Todos los derechos reservados
       </footer>
 
-      {/* Gallery Modal */}
-      {galleryProduct && (
-        <ProductGalleryModal product={galleryProduct} onClose={() => setGalleryProduct(null)} />
-      )}
 
       {/* Cart */}
       <CartDrawer
