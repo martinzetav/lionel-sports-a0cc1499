@@ -34,7 +34,7 @@ export function useCart() {
   }, []);
 
   const total = items.reduce(
-    (sum, i) => sum + i.product.Precio * i.quantity,
+    (sum, i) => sum + (i.product["Precio Oferta"] || i.product.Precio) * i.quantity,
     0
   );
 

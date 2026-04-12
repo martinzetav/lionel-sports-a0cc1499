@@ -117,7 +117,7 @@ export default function CartDrawer({
                             </div>
                             <div className="flex items-center gap-2">
                               <span className="font-display text-lg text-primary">
-                                {formatPrice(item.product.Precio * item.quantity)}
+                                {formatPrice((item.product["Precio Oferta"] || item.product.Precio) * item.quantity)}
                               </span>
                               <button
                                 onClick={() => onRemove(item.product.ID)}
