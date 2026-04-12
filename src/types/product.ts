@@ -6,6 +6,7 @@ export interface Product {
   Categoria3: string;
   Marca: string;
   Precio: number;
+  "Precio Oferta"?: number;
   Img1: string;
   Img2: string;
   Img3: string;

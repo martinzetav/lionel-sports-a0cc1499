@@ -63,9 +63,20 @@ export default function ProductCard({ product, onAdd, index }: ProductCardProps)
         </h3>
         <div className="mt-3 flex items-center justify-between">
           <div>
-            <span className="font-display text-xl text-primary">
-              {formatPrice(product.Precio)}
-            </span>
+            {product["Precio Oferta"] ? (
+              <>
+                <span className="font-display text-sm text-muted-foreground line-through">
+                  {formatPrice(product.Precio)}
+                </span>
+                <span className="ml-1 font-display text-xl text-primary">
+                  {formatPrice(product["Precio Oferta"])}
+                </span>
+              </>
+            ) : (
+              <span className="font-display text-xl text-primary">
+                {formatPrice(product.Precio)}
+              </span>
+            )}
             <p className="text-[10px] font-semibold text-accent">10% OFF Efectivo/Transf.</p>
           </div>
           <motion.button
