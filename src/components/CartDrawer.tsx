@@ -12,6 +12,7 @@ interface CartDrawerProps {
   onUpdateQty: (id: number, delta: number) => void;
   onRemove: (id: number) => void;
   total: number;
+  promoSavings: number;
 }
 
 const formatPrice = (n: number) =>
@@ -24,6 +25,7 @@ export default function CartDrawer({
   onUpdateQty,
   onRemove,
   total,
+  promoSavings,
 }: CartDrawerProps) {
   const handleCheckout = () => {
     if (items.length === 0) return;
@@ -138,6 +140,12 @@ export default function CartDrawer({
             {/* Footer */}
             {items.length > 0 && (
               <div className="border-t border-border px-5 py-4">
+                {promoSavings > 0 && (
+                  <div className="mb-2 flex items-center justify-between text-sm">
+                    <span className="font-semibold text-orange-500">Descuento 3x1</span>
+                    <span className="font-semibold text-orange-500">-{formatPrice(promoSavings)}</span>
+                  </div>
+                )}
                 <div className="mb-4 flex items-center justify-between">
                   <span className="text-muted-foreground">Total</span>
                   <span className="font-display text-2xl text-foreground">
