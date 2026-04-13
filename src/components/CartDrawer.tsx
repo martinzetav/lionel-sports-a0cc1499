@@ -1,6 +1,23 @@
-import { X, Minus, Plus, Trash2, MessageCircle } from "lucide-react";
+import { X, Minus, Plus, Trash2, MessageCircle, ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import type { CartItem } from "@/types/product";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 // ⚠️ CAMBIÁ ESTE NÚMERO POR EL TUYO
 const WHATSAPP_NUMBER = "5493804565772";
@@ -27,17 +44,30 @@ export default function CartDrawer({
   total,
   promoSavings,
 }: CartDrawerProps) {
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [clientName, setClientName] = useState("");
+  const [deliveryMethod, setDeliveryMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
+
+  const isFormValid = clientName.trim() !== "" && deliveryMethod !== "" && paymentMethod !== "";
+
   const handleCheckout = () => {
-    if (items.length === 0) return;
+    if (items.length === 0 || !isFormValid) return;
 
     const lines = items.map(
       (i) =>
         `• ${i.product.Nombre} x${i.quantity} — ${formatPrice(i.product.Precio * i.quantity)}`
     );
     const msg = encodeURIComponent(
-      `¡Hola! Quiero hacer un pedido:\n\n${lines.join("\n")}\n\n*Total: ${formatPrice(total)}*`
+      `¡Hola! Quiero hacer un pedido:\n\n` +
+      `👤 *Cliente:* ${clientName.trim()}\n` +
+      `🚚 *Entrega:* ${deliveryMethod}\n` +
+      `💳 *Pago:* ${paymentMethod}\n\n` +
+      `${lines.join("\n")}\n\n` +
+      `*Total: ${formatPrice(total)}*`
     );
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
+    setShowCheckout(false);
   };
 
   return (
@@ -154,15 +184,74 @@ export default function CartDrawer({
                 </div>
                 <motion.button
                   whileTap={{ scale: 0.97 }}
-                  onClick={handleCheckout}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-[hsl(142,70%,40%)] py-3.5 font-semibold text-[hsl(0,0%,100%)] transition hover:opacity-90"
+                  onClick={() => setShowCheckout(true)}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3.5 font-semibold text-primary-foreground transition hover:opacity-90"
                 >
-                  <MessageCircle className="h-5 w-5" />
-                  Finalizar por WhatsApp
+                  <ShoppingBag className="h-5 w-5" />
+                  Continuar con el pedido
                 </motion.button>
               </div>
             )}
           </motion.aside>
+
+          {/* Checkout Dialog */}
+          <Dialog open={showCheckout} onOpenChange={setShowCheckout}>
+            <DialogContent className="z-[60] sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="font-display text-xl">Datos del pedido</DialogTitle>
+                <DialogDescription>Completá tus datos para finalizar la compra.</DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4 py-2">
+                <div className="space-y-2">
+                  <Label htmlFor="clientName">Cliente</Label>
+                  <Input
+                    id="clientName"
+                    placeholder="Apellido y nombre"
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    maxLength={100}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Entrega</Label>
+                  <Select value={deliveryMethod} onValueChange={setDeliveryMethod}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccioná un método" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Retiro por local">Retiro por local</SelectItem>
+                      <SelectItem value="Delivery">Delivery</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Pago</Label>
+                  <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccioná un método" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Efectivo">Efectivo</SelectItem>
+                      <SelectItem value="Transferencia">Transferencia</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleCheckout}
+                disabled={!isFormValid}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-[hsl(142,70%,40%)] py-3.5 font-semibold text-[hsl(0,0%,100%)] transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <MessageCircle className="h-5 w-5" />
+                Finalizar por WhatsApp
+              </motion.button>
+            </DialogContent>
+          </Dialog>
         </>
       )}
     </AnimatePresence>
