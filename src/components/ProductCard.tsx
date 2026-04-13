@@ -34,6 +34,11 @@ export default function ProductCard({ product, onAdd, index }: ProductCardProps)
           DESTACADO
         </span>
       )}
+      {product["Precio Oferta"] && (
+        <span className={`absolute ${product.Destacado === "SI" ? "left-[5.5rem]" : "left-3"} top-3 z-10 rounded-md bg-green-500 px-2 py-0.5 text-xs font-bold text-white`}>
+          SALE
+        </span>
+      )}
 
       <div className="relative aspect-square overflow-hidden bg-muted">
         {images.map((src, i) => (
