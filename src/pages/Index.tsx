@@ -157,6 +157,7 @@ export default function Index() {
         onUpdateQty={cart.updateQuantity}
         onRemove={cart.removeItem}
         total={cart.total}
+        promoSavings={cart.promoSavings}
       />
     </div>
   );
