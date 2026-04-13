@@ -29,7 +29,7 @@ export default function ProductCard({ product, onAdd, index }: ProductCardProps)
       transition={{ delay: index * 0.05, duration: 0.35 }}
       className="group relative overflow-hidden rounded-lg bg-card shadow-card transition-shadow hover:shadow-card-hover"
     >
-      <div className="absolute left-3 top-3 z-10 flex gap-1.5">
+      <div className="absolute left-3 top-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1.5rem)]">
         {product.Destacado === "SI" && (
           <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-bold text-accent-foreground">
             DESTACADO
