@@ -29,16 +29,18 @@ export default function ProductCard({ product, onAdd, index }: ProductCardProps)
       transition={{ delay: index * 0.05, duration: 0.35 }}
       className="group relative overflow-hidden rounded-lg bg-card shadow-card transition-shadow hover:shadow-card-hover"
     >
-      {product.Destacado === "SI" && (
-        <span className="absolute left-3 top-3 z-10 rounded-md bg-accent px-2 py-0.5 text-xs font-bold text-accent-foreground">
-          DESTACADO
-        </span>
-      )}
-      {product["Precio Oferta"] && (
-        <span className={`absolute ${product.Destacado === "SI" ? "left-[5.5rem]" : "left-3"} top-3 z-10 rounded-md bg-green-500 px-2 py-0.5 text-xs font-bold text-white`}>
-          SALE
-        </span>
-      )}
+      <div className="absolute left-3 top-3 z-10 flex gap-1.5">
+        {product.Destacado === "SI" && (
+          <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-bold text-accent-foreground">
+            DESTACADO
+          </span>
+        )}
+        {product["Precio Oferta"] && (
+          <span className="rounded-md bg-green-500 px-2 py-0.5 text-xs font-bold text-white">
+            SALE
+          </span>
+        )}
+      </div>
 
       <div className="relative aspect-square overflow-hidden bg-muted">
         {images.map((src, i) => (
