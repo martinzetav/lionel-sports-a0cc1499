@@ -55,16 +55,19 @@ export default function CartDrawer({
     if (items.length === 0 || !isFormValid) return;
 
     const lines = items.map(
-      (i) =>
-        `• ${i.product.Nombre} x${i.quantity} — ${formatPrice(i.product.Precio * i.quantity)}`
+      (i) => {
+        const unitPrice = i.product["Precio Oferta"] || i.product.Precio;
+        return `  • ${i.product.Nombre} x${i.quantity} → ${formatPrice(unitPrice * i.quantity)}`;
+      }
     );
     const msg = encodeURIComponent(
-      `¡Hola! Quiero hacer un pedido:\n\n` +
-      `👤 *Cliente:* ${clientName.trim()}\n` +
-      `🚚 *Entrega:* ${deliveryMethod}\n` +
-      `💳 *Pago:* ${paymentMethod}\n\n` +
-      `${lines.join("\n")}\n\n` +
-      `*Total: ${formatPrice(total)}*`
+      `*Pedido en Lionel Sports*\n\n` +
+      `*Cliente:* ${clientName.trim()}\n\n` +
+      `*Entrega:* ${deliveryMethod}\n\n` +
+      `*Pago:* ${paymentMethod}\n\n` +
+      `--- DETALLE ---\n\n` +
+      `👕 *Productos:*\n\n${lines.join("\n\n")}\n\n` +
+      `💰 *Total: ${formatPrice(total)}*`
     );
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
     setShowCheckout(false);
@@ -195,8 +198,8 @@ export default function CartDrawer({
           </motion.aside>
 
           {/* Checkout Dialog */}
-          <Dialog open={showCheckout} onOpenChange={setShowCheckout}>
-            <DialogContent className="z-[60] sm:max-w-md">
+          <Dialog open={showCheckout} onOpenChange={setShowCheckout} modal={true}>
+            <DialogContent className="z-[60] sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
               <DialogHeader>
                 <DialogTitle className="font-display text-xl">Datos del pedido</DialogTitle>
                 <DialogDescription>Completá tus datos para finalizar la compra.</DialogDescription>
@@ -220,7 +223,7 @@ export default function CartDrawer({
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccioná un método" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent position="popper" className="z-[70]">
                       <SelectItem value="Retiro por local">Retiro por local</SelectItem>
                       <SelectItem value="Delivery">Delivery</SelectItem>
                     </SelectContent>
@@ -233,7 +236,7 @@ export default function CartDrawer({
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccioná un método" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent position="popper" className="z-[70]">
                       <SelectItem value="Efectivo">Efectivo</SelectItem>
                       <SelectItem value="Transferencia">Transferencia</SelectItem>
                     </SelectContent>
