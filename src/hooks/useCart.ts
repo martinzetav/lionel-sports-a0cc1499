@@ -5,27 +5,29 @@ export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const addItem = useCallback((product: Product) => {
+  const addItem = useCallback((product: Product, size?: string) => {
     setItems((prev) => {
-      const existing = prev.find((i) => i.product.ID === product.ID);
+      const existing = prev.find((i) => i.product.ID === product.ID && i.size === size);
       if (existing) {
         return prev.map((i) =>
-          i.product.ID === product.ID ? { ...i, quantity: i.quantity + 1 } : i
+          i.product.ID === product.ID && i.size === size
+            ? { ...i, quantity: i.quantity + 1 }
+            : i
         );
       }
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { product, quantity: 1, size }];
     });
   }, []);
 
-  const removeItem = useCallback((productId: number) => {
-    setItems((prev) => prev.filter((i) => i.product.ID !== productId));
+  const removeItem = useCallback((productId: number, size?: string) => {
+    setItems((prev) => prev.filter((i) => !(i.product.ID === productId && i.size === size)));
   }, []);
 
-  const updateQuantity = useCallback((productId: number, delta: number) => {
+  const updateQuantity = useCallback((productId: number, delta: number, size?: string) => {
     setItems((prev) =>
       prev
         .map((i) =>
-          i.product.ID === productId
+          i.product.ID === productId && i.size === size
             ? { ...i, quantity: Math.max(0, i.quantity + delta) }
             : i
         )
