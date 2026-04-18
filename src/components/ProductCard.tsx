@@ -2,16 +2,28 @@ import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Product } from "@/types/product";
+import SizeSelectorDialog from "@/components/SizeSelectorDialog";
 
 interface ProductCardProps {
   product: Product;
-  onAdd: (p: Product) => void;
+  onAdd: (p: Product, size?: string) => void;
   index: number;
 }
 
 export default function ProductCard({ product, onAdd, index }: ProductCardProps) {
   const images = [product.Img1, product.Img2, product.Img3].filter(Boolean);
   const [current, setCurrent] = useState(0);
+  const [sizeOpen, setSizeOpen] = useState(false);
+
+  const hasSizes = !!(product.Talle && product.Talle.trim());
+
+  const handleAddClick = () => {
+    if (hasSizes) {
+      setSizeOpen(true);
+    } else {
+      onAdd(product);
+    }
+  };
 
   useEffect(() => {
     if (images.length <= 1) return;
@@ -98,13 +110,20 @@ export default function ProductCard({ product, onAdd, index }: ProductCardProps)
           </div>
           <motion.button
             whileTap={{ scale: 0.85 }}
-            onClick={() => onAdd(product)}
+            onClick={handleAddClick}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground transition hover:opacity-90"
           >
             <Plus className="h-4 w-4" />
           </motion.button>
         </div>
       </div>
+
+      <SizeSelectorDialog
+        product={product}
+        open={sizeOpen}
+        onClose={() => setSizeOpen(false)}
+        onConfirm={(p, size) => onAdd(p, size)}
+      />
     </motion.div>
   );
 }
