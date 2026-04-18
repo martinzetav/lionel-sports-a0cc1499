@@ -30,6 +30,8 @@ interface CartDrawerProps {
   onRemove: (id: number) => void;
   total: number;
   promoSavings: number;
+  promo3x1Savings?: number;
+  promo2x1Savings?: number;
 }
 
 const formatPrice = (n: number) =>
@@ -43,6 +45,8 @@ export default function CartDrawer({
   onRemove,
   total,
   promoSavings,
+  promo3x1Savings = 0,
+  promo2x1Savings = 0,
 }: CartDrawerProps) {
   const [showCheckout, setShowCheckout] = useState(false);
   const [clientName, setClientName] = useState("");
@@ -173,10 +177,16 @@ export default function CartDrawer({
             {/* Footer */}
             {items.length > 0 && (
               <div className="border-t border-border px-5 py-4">
-                {promoSavings > 0 && (
+                {promo3x1Savings > 0 && (
                   <div className="mb-2 flex items-center justify-between text-sm">
                     <span className="font-semibold text-orange-500">Descuento 3x1</span>
-                    <span className="font-semibold text-orange-500">-{formatPrice(promoSavings)}</span>
+                    <span className="font-semibold text-orange-500">-{formatPrice(promo3x1Savings)}</span>
+                  </div>
+                )}
+                {promo2x1Savings > 0 && (
+                  <div className="mb-2 flex items-center justify-between text-sm">
+                    <span className="font-semibold text-purple-500">Descuento 2x1</span>
+                    <span className="font-semibold text-purple-500">-{formatPrice(promo2x1Savings)}</span>
                   </div>
                 )}
                 <div className="mb-4 flex items-center justify-between">
