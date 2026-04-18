@@ -26,8 +26,8 @@ interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   items: CartItem[];
-  onUpdateQty: (id: number, delta: number) => void;
-  onRemove: (id: number) => void;
+  onUpdateQty: (id: number, delta: number, size?: string) => void;
+  onRemove: (id: number, size?: string) => void;
   total: number;
   promoSavings: number;
   promo3x1Savings?: number;
@@ -61,7 +61,8 @@ export default function CartDrawer({
     const lines = items.map(
       (i) => {
         const unitPrice = i.product["Precio Oferta"] || i.product.Precio;
-        return `  • ${i.product.Nombre} x${i.quantity} → ${formatPrice(unitPrice * i.quantity)}`;
+        const sizeLabel = i.size ? ` (Talle ${i.size})` : "";
+        return `  • ${i.product.Nombre}${sizeLabel} x${i.quantity} → ${formatPrice(unitPrice * i.quantity)}`;
       }
     );
     const msg = encodeURIComponent(
@@ -117,7 +118,7 @@ export default function CartDrawer({
                   <AnimatePresence>
                     {items.map((item) => (
                       <motion.li
-                        key={item.product.ID}
+                        key={`${item.product.ID}-${item.size ?? ""}`}
                         layout
                         initial={{ opacity: 0, x: 30 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -135,11 +136,16 @@ export default function CartDrawer({
                               {item.product.Nombre}
                             </p>
                             <p className="text-xs text-muted-foreground">{item.product.Marca}</p>
+                            {item.size && (
+                              <p className="mt-0.5 text-xs font-semibold text-foreground">
+                                Talle: <span className="text-primary">{item.size}</span>
+                              </p>
+                            )}
                           </div>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <button
-                                onClick={() => onUpdateQty(item.product.ID, -1)}
+                                onClick={() => onUpdateQty(item.product.ID, -1, item.size)}
                                 className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-foreground transition hover:bg-muted"
                               >
                                 <Minus className="h-3 w-3" />
@@ -148,7 +154,7 @@ export default function CartDrawer({
                                 {item.quantity}
                               </span>
                               <button
-                                onClick={() => onUpdateQty(item.product.ID, 1)}
+                                onClick={() => onUpdateQty(item.product.ID, 1, item.size)}
                                 className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-foreground transition hover:bg-muted"
                               >
                                 <Plus className="h-3 w-3" />
@@ -159,7 +165,7 @@ export default function CartDrawer({
                                 {formatPrice((item.product["Precio Oferta"] || item.product.Precio) * item.quantity)}
                               </span>
                               <button
-                                onClick={() => onRemove(item.product.ID)}
+                                onClick={() => onRemove(item.product.ID, item.size)}
                                 className="text-muted-foreground transition hover:text-destructive"
                               >
                                 <Trash2 className="h-4 w-4" />
