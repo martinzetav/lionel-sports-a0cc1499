@@ -12,6 +12,7 @@ export interface Product {
   Img3: string;
   Destacado: string;
   "3x1"?: string;
+  "2x1"?: string;
   Slug: string;
   Estado: string;
 }

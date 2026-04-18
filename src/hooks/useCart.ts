@@ -33,17 +33,8 @@ export function useCart() {
     );
   }, []);
 
-  // 3x1 promo: every 3 units among 3x1 products, pay only the most expensive
-  const { total, promoSavings } = (() => {
-    const normalItems = items.filter((i) => i.product["3x1"] !== "Activo");
-    const promoItems = items.filter((i) => i.product["3x1"] === "Activo");
-
-    const normalTotal = normalItems.reduce(
-      (sum, i) => sum + (i.product["Precio Oferta"] || i.product.Precio) * i.quantity,
-      0
-    );
-
-    // Expand promo items into individual units sorted by price desc
+  // NxM promo helper: every `groupSize` units, pay only the most expensive
+  const computePromo = (promoItems: CartItem[], groupSize: number) => {
     const units: number[] = [];
     promoItems.forEach((i) => {
       const price = i.product["Precio Oferta"] || i.product.Precio;
@@ -55,17 +46,10 @@ export function useCart() {
     let fullTotal = 0;
     for (let i = 0; i < units.length; i++) {
       fullTotal += units[i];
-      const posInGroup = i % 3;
-      if (posInGroup === 0) {
-        // most expensive in the group — charge it
-        promoTotal += units[i];
-      }
-      // positions 1 and 2 in each group of 3 are free
+      if (i % groupSize === 0) promoTotal += units[i];
     }
-    // Units that don't complete a group of 3 pay normal price
-    const remainder = units.length % 3;
+    const remainder = units.length % groupSize;
     if (remainder > 0) {
-      // Undo the grouping for the last incomplete group
       const lastGroupStart = units.length - remainder;
       let lastGroupPromo = 0;
       let lastGroupFull = 0;
@@ -75,10 +59,31 @@ export function useCart() {
       }
       promoTotal = promoTotal - lastGroupPromo + lastGroupFull;
     }
+    return { promoTotal, savings: fullTotal - promoTotal };
+  };
+
+  const { total, promoSavings, promo2x1Savings, promo3x1Savings } = (() => {
+    const promo3Items = items.filter((i) => i.product["3x1"] === "Activo");
+    const promo2Items = items.filter(
+      (i) => i.product["2x1"] === "Activo" && i.product["3x1"] !== "Activo"
+    );
+    const normalItems = items.filter(
+      (i) => i.product["3x1"] !== "Activo" && i.product["2x1"] !== "Activo"
+    );
+
+    const normalTotal = normalItems.reduce(
+      (sum, i) => sum + (i.product["Precio Oferta"] || i.product.Precio) * i.quantity,
+      0
+    );
+
+    const r3 = computePromo(promo3Items, 3);
+    const r2 = computePromo(promo2Items, 2);
 
     return {
-      total: normalTotal + promoTotal,
-      promoSavings: fullTotal - promoTotal,
+      total: normalTotal + r3.promoTotal + r2.promoTotal,
+      promoSavings: r3.savings + r2.savings,
+      promo3x1Savings: r3.savings,
+      promo2x1Savings: r2.savings,
     };
   })();
 
@@ -96,6 +101,8 @@ export function useCart() {
     total,
     totalItems,
     promoSavings,
+    promo3x1Savings,
+    promo2x1Savings,
     clearCart,
   };
 }

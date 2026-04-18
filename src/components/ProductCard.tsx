@@ -45,6 +45,11 @@ export default function ProductCard({ product, onAdd, index }: ProductCardProps)
             3x1
           </span>
         )}
+        {product["2x1"] === "Activo" && (
+          <span className="rounded-md bg-purple-500 px-2 py-0.5 text-xs font-bold text-white">
+            2x1
+          </span>
+        )}
       </div>
 
       <div className="relative aspect-square overflow-hidden bg-muted">
