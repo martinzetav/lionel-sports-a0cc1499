@@ -36,32 +36,31 @@ export function useCart() {
   }, []);
 
   // NxM promo helper: every `groupSize` units, pay only the most expensive
+  // NxM promo helper: por cada `groupSize` unidades COMPLETAS, se paga solo la más cara
+  // y se regalan las (groupSize - 1) más baratas. Los sobrantes incompletos se pagan todos.
   const computePromo = (promoItems: CartItem[], groupSize: number) => {
     const units: number[] = [];
     promoItems.forEach((i) => {
       const price = i.product["Precio Oferta"] || i.product.Precio;
       for (let q = 0; q < i.quantity; q++) units.push(price);
     });
+    // Ordenar descendente para que cada grupo completo cobre el más caro
     units.sort((a, b) => b - a);
 
-    let promoTotal = 0;
-    let fullTotal = 0;
-    for (let i = 0; i < units.length; i++) {
-      fullTotal += units[i];
-      if (i % groupSize === 0) promoTotal += units[i];
-    }
-    const remainder = units.length % groupSize;
-    if (remainder > 0) {
-      const lastGroupStart = units.length - remainder;
-      let lastGroupPromo = 0;
-      let lastGroupFull = 0;
-      for (let i = lastGroupStart; i < units.length; i++) {
-        lastGroupFull += units[i];
-        if (i === lastGroupStart) lastGroupPromo += units[i];
+    const fullTotal = units.reduce((s, p) => s + p, 0);
+    const completeGroups = Math.floor(units.length / groupSize);
+
+    let savings = 0;
+    // Para cada grupo completo, descontar las (groupSize - 1) unidades más baratas del grupo
+    for (let g = 0; g < completeGroups; g++) {
+      const groupStart = g * groupSize;
+      // El más caro del grupo está en groupStart (por orden desc); descontamos los siguientes
+      for (let k = 1; k < groupSize; k++) {
+        savings += units[groupStart + k];
       }
-      promoTotal = promoTotal - lastGroupPromo + lastGroupFull;
     }
-    return { promoTotal, savings: fullTotal - promoTotal };
+
+    return { promoTotal: fullTotal - savings, savings };
   };
 
   const { total, promoSavings, promo2x1Savings, promo3x1Savings } = (() => {
