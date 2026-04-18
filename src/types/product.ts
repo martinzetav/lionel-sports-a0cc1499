@@ -15,9 +15,11 @@ export interface Product {
   "2x1"?: string;
   Slug: string;
   Estado: string;
+  Talle?: string;
 }
 
 export interface CartItem {
   product: Product;
   quantity: number;
+  size?: string;
 }
